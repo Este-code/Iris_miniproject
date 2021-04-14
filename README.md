@@ -2,7 +2,7 @@
 DONE:
 1) Load the dataset
 2) Explore the data
+3) Detect outliers
 
 TO DO:
-1) Detect outliers
-2) Export result
+1) Export result
