@@ -75,67 +75,81 @@ std_virginica = np.std(virginica, axis=0)
 temp_setosa = []
 temp_versicolor = []
 temp_virginica = []
+
 # SETOSA outliers
 rows, cols = setosa.shape
 for i in range(0, cols):
     lower = average_setosa[i] - 2*std_setosa[i]
+    temp_setosa.append(lower)
+for i in range(0, cols):
     upper = average_setosa[i] + 2*std_setosa[i]
-    temp_setosa.append([lower,upper])
-outliers_setosa=np.array(temp_setosa)
+    temp_setosa.append(upper)
 
-# adding new statistics
+outliers_setosa=np.array(temp_setosa)
+outliers_setosa.resize(2,5)
+
 
 # VERSICOLOR outliers
 rows, cols = versicolor.shape
 for i in range(0, cols):
-    lower = average_setosa[i] - 2*std_setosa[i]
-    upper = average_setosa[i] + 2*std_setosa[i]
-    temp_versicolor.append([lower,upper])
+    lower = average_versicolor[i] - 2*std_versicolor[i]
+    temp_versicolor.append(lower)
+for i in range(0, cols):
+    upper = average_versicolor[i] + 2*std_versicolor[i]
+    temp_versicolor.append(upper)
+
 outliers_versicolor=np.array(temp_versicolor)
+outliers_versicolor.resize(2,5)
+
+
 
 # VIRGINICA outliers
 rows, cols = virginica.shape
 for i in range(0, cols):
-    lower = average_setosa[i] - 2*std_setosa[i]
-    upper = average_setosa[i] + 2*std_setosa[i]
-    temp_virginica.append([lower,upper])
+    lower = average_virginica[i] - 2*std_virginica[i]
+    temp_virginica.append(lower)
+for i in range(0, cols):
+    upper = average_virginica[i] + 2*std_virginica[i]
+    temp_virginica.append(upper)
+
 outliers_virginica=np.array(temp_virginica)
-outliers_virginica.resize(5,2)
-outliers_virginica = np.array(outliers_virginica[:4,:])
-print(outliers_virginica)
+outliers_virginica.resize(2,5)
+
+
+
 # EXPORT TO A FILE
 
 # adding lower and upper outliers statistics to first row 
-new_statistics = np.array(['lower_outliers', 'upper_outlier'])
-
-
-
 # using round to get only one decimal
-setosa_statistics = np.vstack([first_row,np.round_(average_setosa, 1),np.round_(maxi_setosa, 1),np.round_(mini_setosa,1),np.round_(std_setosa,1)])
-first_column=np.array(['setosa','average','maximum','minimum','standard_deviation'])
-first_column.resize(5,1)
-setosa_statistics = np.hstack([first_column,setosa_statistics])
-setosa_statistics = np.array(setosa_statistics[:,:5])
-setosa_statistics = np.vstack([setosa_statistics,new_statistics])
 
-print(setosa_statistics)
+# first column is going to be shared between tables
+first_column=np.array(['Average','Maximum','Minimum','Standard_d','LowerOutlier','UpperOutlier'])
+first_column.resize(6,1)
 
-
-
-
-versicolor_statistics = np.vstack([first_row,np.round_(average_versicolor, 1),np.round_(maxi_versicolor, 1),np.round_(mini_versicolor,1),np.round_(std_versicolor,1)])
-first_column=np.array(['versicolor','average','maximum','minimum','standard_deviation'])
-first_column.resize(5,1)
+first_row = np.hstack(['Versicolor',first_row[:4]])
+versicolor_statistics = np.vstack([np.round_(average_versicolor, 1),np.round_(maxi_versicolor, 1),np.round_(mini_versicolor,1),np.round_(std_versicolor,1),np.round_(outliers_versicolor,1)])
+versicolor_statistics = np.array(versicolor_statistics[:,:4])
 versicolor_statistics = np.hstack([first_column,versicolor_statistics])
-versicolor_statistics = np.array(versicolor_statistics[:,:5])
+versicolor_statistics = np.vstack([first_row,versicolor_statistics])
 
+first_row[0] = 'Setosa'
+setosa_statistics = np.vstack([np.round_(average_setosa, 1),np.round_(maxi_setosa, 1),np.round_(mini_setosa,1),np.round_(std_setosa,1),np.round_(outliers_setosa,1)])
+setosa_statistics = np.array(setosa_statistics[:,:4])
+setosa_statistics = np.hstack([first_column,setosa_statistics])
+setosa_statistics = np.vstack([first_row,setosa_statistics])
 
-
-virginica_statistics = np.vstack([first_row,np.round_(average_virginica, 1),np.round_(maxi_virginica, 1),np.round_(mini_virginica,1),np.round_(std_virginica,1)])
-first_column=np.array(['virginica','average','maximum','minimum','standard_deviation'])
-first_column.resize(5,1)
+first_row[0] = 'Virginica'
+virginica_statistics = np.vstack([np.round_(average_virginica, 1),np.round_(maxi_virginica, 1),np.round_(mini_virginica,1),np.round_(std_virginica,1),np.round_(outliers_virginica,1)])
+virginica_statistics = np.array(virginica_statistics[:,:4])
 virginica_statistics = np.hstack([first_column,virginica_statistics])
-virginica_statistics = np.array(virginica_statistics[:,:5])
+virginica_statistics = np.vstack([first_row,virginica_statistics])
+
+
+# EXPORT TO FILE
+
+np.savetxt("setosa_statistics.csv", setosa_statistics, delimiter=',', fmt='%s')
+np.savetxt("versicolor_statistics.csv", versicolor_statistics, delimiter=',', fmt='%s')
+np.savetxt("virginica_statistics.csv", virginica_statistics, delimiter=',', fmt='%s')
 
 
 
